@@ -1,7 +1,15 @@
 package ftp_program;
 
-public class Song {
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
 
+public class Song {
+	
+	static Scanner scn = new Scanner(System.in);						
+	static Map<String, String> map = new HashMap<String, String>();		
+	
 	//곡 정보
 	private String songName;
 	private String albumName;
@@ -9,6 +17,7 @@ public class Song {
 	
 	//아티스트 정보
 	private String artistName;
+
 
 	
 	//생성자(노래 관련 정보를 초기화 시켜줌)
@@ -66,7 +75,7 @@ public class Song {
 			+   "│\t 아티스트   → "+ artistName+ "\n"
 			+   "■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■\n";
 	}
-	public void printSong(int a) {
+	public static void printSong(int a) {
 		switch(a) {
 		case 1:
 			System.out.println("■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■");
@@ -102,9 +111,28 @@ public class Song {
 			break;
 		case 5:
 			break;
-			
 		}
-		
-		
 	}
+	
+	public static String selFile(int fileNum) {
+		String numfileName = null;
+		switch (fileNum) {
+		case 1:
+			numfileName = "africa-toto.wav";
+			break;
+		case 2:
+			numfileName = "around_the_world-atc.wav";
+			break;
+		case 3:
+			numfileName = "evangeline-matthew_sweet.wav";
+			break;
+		case 4:
+			numfileName = "dont_speak-no_doubt.wav";
+			break;
+		}
+		return numfileName;
+	}
+	
+	
+	
 }
