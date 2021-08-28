@@ -18,6 +18,10 @@ public abstract class TcpApplication {
 	public static String IP;
 	public static int PORT;
 	
+	// 서버 및 클라이언트 메인 네임
+	public static String CNAME = "CLIENT";
+	public static String SNAME = "SERVER";
+	
 	
 	public static String CONFIG = "config/applicationcontext.ini";
 	

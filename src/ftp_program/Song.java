@@ -1,14 +1,21 @@
 package ftp_program;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.Set;
 
 public class Song {
 	
 	static Scanner scn = new Scanner(System.in);						
 	static Map<String, String> map = new HashMap<String, String>();		
+	
+	// 음악 별로 코멘트가 저정되는 리스트들이며, 수정이 빈번할것으로 예상되어 LinkedList로 구현 하였음
+	public static List<Song> song1 = new LinkedList<>();
+	public static List<Song> song2 = new LinkedList<>();
+	public static List<Song> song3 = new LinkedList<>();
+	public static List<Song> song4 = new LinkedList<>();
 	
 	//곡 정보
 	private String songName;
@@ -64,17 +71,22 @@ public class Song {
 		this.artistName = artistName;
 	}
 
-	//Song 객체 print시 하기 형식으로 출력 하도록 오버라이딩
+	//다시 오버라이딩 함
 	@Override
 	public String toString() {
-		return 
-				"■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■\n"
-			+   "│\t 곡    이름  → "+ songName+ "\n"
-			+   "│\t 앨범 정보  → "+ albumName+ "\n"
-			+   "│\t 발  매  일  → "+ albumDate+ "\n"
-			+   "│\t 아티스트   → "+ artistName+ "\n"
-			+   "■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■\n";
+		return this.songName;
 	}
+	//Song 객체 print시 하기 형식으로 출력 하도록 오버라이딩
+//	@Override
+//	public String toString() {
+//		return 
+//				"■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■\n"
+//			+   "│\t 곡    이름  → "+ songName+ "\n"
+//			+   "│\t 앨범 정보  → "+ albumName+ "\n"
+//			+   "│\t 발  매  일  → "+ albumDate+ "\n"
+//			+   "│\t 아티스트   → "+ artistName+ "\n"
+//			+   "■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■\n";
+//	}
 	public static void printSong(int a) {
 		switch(a) {
 		case 1:
@@ -87,12 +99,12 @@ public class Song {
 			break;
 		case 2:
 			System.out.println("■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■");
-			System.out.println("│\t 곡  이름\t→\tArount The World");
+			System.out.println("│\t 곡  이름\t→\tAround The World");
 			System.out.println("│\t 앨범 정보\t→\tPEACE");
 			System.out.println("│\t 발 매 일\t→\t2015.11.22");
 			System.out.println("│\t 아티스트\t→\tATC");
 			System.out.println("■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■");
-			break;			
+			break;
 		case 3:
 			System.out.println("■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■");
 			System.out.println("│\t 곡  이름\t→\tSweet");
@@ -109,7 +121,8 @@ public class Song {
 			System.out.println("│\t 아티스트\t→\tNO DOUBT");
 			System.out.println("■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■");
 			break;
-		case 5:
+		default :
+			System.out.println("숫자로 다시 입력해 주세요.");
 			break;
 		}
 	}

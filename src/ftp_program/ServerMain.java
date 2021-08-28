@@ -2,6 +2,8 @@ package ftp_program;
 
 import java.util.Scanner;
 
+import com.framework.TcpApplication;
+
 public class ServerMain {
 
 	public static void main(String[] args) {
@@ -15,9 +17,11 @@ public class ServerMain {
 		// 예외 처리 완료
 		int select = 0;
 		Loop1: while (true) {
+			//최초 메뉴 출력
 			Menu.dundunDance();
-			showMenu();
+			Menu.showMenu(TcpApplication.SNAME);
 			System.out.printf("                >");
+			//숫자 이외의 데이터 입력시 반복되도록 예외 처리
 			try {
 				select = Integer.parseInt(sc.nextLine());
 			} catch (NumberFormatException e) {
@@ -39,6 +43,7 @@ public class ServerMain {
 				System.out.println("          1 또는 0만 입력 가능합니다 !!!");
 			}
 		}
+		//서버 객체 인스턴스화
 		FTPServer server = new FTPServer();
 
 		// 서버 초기화
@@ -48,20 +53,4 @@ public class ServerMain {
 		server.start();
 	}
 
-	public static void showMenu() {
-		System.out.printf("                                      \n");
-		System.out.printf("          ■■■■■■■■■■■■■■■■■■■■■■■■■■■■\n");
-		System.out.printf("                                      \n");
-		System.out.printf("            [SERVER version 1.0.1®]   \n");
-		System.out.printf("                                      \n");
-		System.out.printf("          ■■■■■■■■■■■■■■■■■■■■■■■■■■■■\n");
-		System.out.printf("                                      \n");
-		System.out.printf("                                      \n");
-		System.out.printf("                                      \n");
-
-		System.out.printf("          1 → Start                   \n");
-		System.out.printf("          0 → End                     \n");
-		System.out.printf("                                      \n");
-		System.out.printf("                                      \n");
-	}
 }

@@ -43,13 +43,12 @@ public class FTPClient extends TcpApplication {
 
 	// 다운로드 바이트 증가에 따른 도형 출력을 위한 카운터
 	public static int cnt = 0;
-	
+
 	// 회원, 게스트 구분
-	public static int is_mem =0;
+	public static int is_mem = 0;
 
-	// 음악 다운로드 그만하게 만드는 변수
-	public static String musicDownControl = "";
-
+	// 음원 정보 선택을 받아줄 변수
+	public static int musicSelect;
 	// 클라이언트 소켓
 	Socket socket = null;
 
@@ -65,13 +64,21 @@ public class FTPClient extends TcpApplication {
 			din = new DataInputStream(in);
 			bi = new BufferedInputStream(in);
 			br = new BufferedReader(new InputStreamReader(in));
+
 			// 송신 스트림 설정
 			out = socket.getOutputStream();
 			dout = new DataOutputStream(out);
 			pw = new PrintWriter(new OutputStreamWriter(out));
 
 			// <로그인 세션>
-			accountCheck();
+			while (true) {
+				try {
+					accountCheck();
+					break;
+				} catch (NumberFormatException e) {
+					System.out.println("숫자형식으로 입력 바랍니다.");
+				}
+			}
 
 			// <리스트 세션>
 			listDown();
@@ -79,12 +86,16 @@ public class FTPClient extends TcpApplication {
 
 			// <메인 세션>
 			// 메뉴에 예외 발생하면 반복 실행되도록 구현
-			try {
-				// 메뉴 선택 기능
-				Menu.heart();
-				selectMenu();
-			} catch (NumberFormatException e) {
-				System.out.println("숫자형식으로 입력 바랍니다.");
+			// 메뉴 선택 기능
+			Menu.heart();
+
+			while (true) {
+				try {
+					selectMenu();
+					break;
+				} catch (NumberFormatException e) {
+					System.out.println("숫자형식으로 입력 바랍니다.");
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -116,7 +127,7 @@ public class FTPClient extends TcpApplication {
 		int input = 0;
 		Loop1: while (true) {
 			// 메뉴 출력
-			menuDisplay();
+			Menu.menuDisplay();
 			// 메뉴 선택
 			input = Integer.parseInt(sc.nextLine());
 			// 메뉴 번호 서버로 송신
@@ -143,41 +154,46 @@ public class FTPClient extends TcpApplication {
 				// 음원 다운로드 기능
 				System.out.println("음원 다운로드 메뉴입니다.");
 				System.out.println("다운 받고 싶은 음원을 선택해 주세요.");
-				String endDownload = "";
 
-
-					// 파일 리스트 출력
-					Menu.showFileList();
-
-					// 음악 번호로 선택가능하도록 구현
-
-					// 선택된 번호의 파일을 다운로드
+				while (true) {
 					try {
+						// 파일 리스트 출력
+						Menu.showFileList();
+
+						// 선택된 번호의 파일을 다운로드
 						int fileNum = Integer.parseInt(sc.nextLine());
 						FILENAME = Song.selFile(fileNum);
 						musicDown(FILENAME);
+						break;
+					} catch (NumberFormatException e) {
+						System.out.println("숫자로 입력해 주세요.");
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
+				}
 				break;
-
 			case 3:
-				System.out.println("리뷰 게시판을 출력 합니다.");
-				Song song = new Song();
+				// 로그인 회원만 게시판 접근 가능하도록 구현
+				if (is_mem == 1) {
+					System.out.println("리뷰 게시판을 출력 합니다.");
 
-				// 곡 리스트 출력
-				Menu.showMusicList();
+					// 곡 리스트 출력
+					Menu.showMusicList();
 
-				// 곡 선택
-				int a = Integer.parseInt(sc.nextLine());
-				// 곡 정보 출력
-				song.printSong(a);
-				
-				//리뷰 작성
-				Person.reviewOrNo();
-				Person.showComment2();
+					// 곡 선택
+					musicSelect = Integer.parseInt(sc.nextLine());
+
+					// 곡 정보 출력
+					Song.printSong(musicSelect);
+
+					// 리뷰 작성
+					int is_review = Person.reviewOrNo();
+					Person.showComment2(is_review);
+					break;
+				} else {
+					System.out.println("게시판은 회원 전용 입니다.");
+				}
 				break;
-
 			case 4:
 				System.out.println("프로그램을 종료 합니다.");
 				pw.println("quit");
@@ -192,7 +208,7 @@ public class FTPClient extends TcpApplication {
 		int input = 0;
 		Login: while (true) {
 			// 로그인 메뉴 출력
-			loginDisplay();
+			Menu.loginDisplay();
 			// 메뉴 선택
 			input = Integer.parseInt(sc.nextLine());
 
@@ -255,70 +271,9 @@ public class FTPClient extends TcpApplication {
 		}
 	}
 
-	// 로그인 세션에서 사용되며, 로그인 및 회원가입 기능 구현
-	private static void loginDisplay() {
-		System.out.println();
-		System.out.println("───────────────────────────────────────────────────────────────");
-		System.out.println();
-		System.out.println("              고결의 SOUND CLOUD v1.0");
-		System.out.println();
-		System.out.println(" [1] 회원 가입 [2] 로그인 [3] 게스트로 입장 [4] 프로그램 종료");
-		System.out.println();
-		System.out.println("───────────────────────────────────────────────────────────────");
-		System.out.println();
-		System.out.print(" 선택>");
-	}
-
-	// 메뉴 출력
-	public static void menuDisplay() {
-
-		System.out.println();
-		System.out.println("───────────────────────────────────────────────────────────────");
-		System.out.println();
-		System.out.println("                원하시는 메뉴를 선택해 주세요.");
-		System.out.println();
-		System.out.println(" [1] 음원 재생 [2] 다운로드 [3] 리뷰 게시판 [4] 프로그램 종료");
-		System.out.println();
-		System.out.println("───────────────────────────────────────────────────────────────");
-		System.out.println();
-		System.out.print(" 선택>");
-	}
-
-	// 음원 파일 리스트 출력
-//	public static void showFileList() {
-//		System.out.println();
-//		System.out.println(
-//				"─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────");
-//		System.out.println();
-//		System.out.println("   받고 싶은 파일의 번호을 입력해 주세요.");
-//		System.out.println();
-//		System.out.println(
-//				" [1] africa-toto.wav [2] around_the_world-atc.wav [3] dont_speak-no_doubt.wav [4] evangeline-matthew_sweet.wav");
-//		System.out.println();
-//		System.out.println(
-//				"─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────");
-//		System.out.println();
-//		System.out.print(" 선택>");
-//	}
-
-	// 음원 리스트 출력
-	public static void showMusicList() {
-		System.out.println();
-		System.out.println("───────────────────────────────────────────────────────────────");
-		System.out.println();
-		System.out.println("                  음원 리스트 입니다");
-		System.out.println();
-		System.out.println(" [1] Africa [2] Around The World [3] Sweet [4] Don't Speak");
-		System.out.println();
-		System.out.println("───────────────────────────────────────────────────────────────");
-		System.out.println();
-		System.out.print(" 선택>");
-	}
-
 	// 음원 선택 후 다운로드 기능
 	public static void musicDown(String fileName) throws Exception {
 		try {
-
 			// 서버로 전송
 			dout.writeUTF(fileName);
 			System.out.println(timeStamp() + "파일 서버에 요청하였습니다.");
@@ -327,56 +282,34 @@ public class FTPClient extends TcpApplication {
 			// 파일데이터 수신
 			System.out.println("파일 수신 중...");
 			System.out.println();
-
+			
+			//매개변수의 기입된 경로로 파일이 만들어질 길을 설정해줌
 			fos = new FileOutputStream(DOWNLOADPATH + fileName);
+			
+			//전송속도 측정 시작
 			long start = System.currentTimeMillis();
-			int i=0,heart=0;
-	         while (true) {
-	            // 읽기
-	            int data = din.read();
-//	            System.out.println("클라에서 읽기"+data);
+			int heart = 0;
+			while (true) {
+				// 읽기
+				int data = din.read();
+//	            System.out.println("클라에서 읽기"+data); //데이터 입출력 이상있을때 체크용
 
-	            // 쓰기
-	            fos.write(data);
-	            fos.flush();
-//	            System.out.println("클라에서 쓰기"+data);
+				// 쓰기
+				fos.write(data);
+				fos.flush();
+//	            System.out.println("클라에서 쓰기"+data); //데이터 입출력 이상있을때 체크용
 
-	            if (cnt % 50000 == 0) {
-	               i++;
-	               switch (i) {
-	               case 1:
-	                  System.out.println("|/)");
-	                  break;
-	               case 2:
-	                  System.out.println("|')\n");
-	                  break;
-	               case 3:
-	                  System.out.println("|/)_/)");
-	                  break;
-	               case 4:
-	                  System.out.println("| 'ㅅ') \n");
-	                  break;
-	               case 5:
-	                  System.out.println("|/)_/)");
-	                  break;
-	               case 6:
-	                  System.out.println("| 'ㅅ')っ♥");
-	                  heart++;
-	                  break;
-	               case 7:
-	                  System.out.println("\n\n");
-	                  i = 0;
-	                  break;
-	               }
-	            }
-	            // 속썩이던 친구가 고쳐짐
-	            if (data == 255) {
-	               break;
-	            }
-	            cnt++;
-	         }
-	         long end = System.currentTimeMillis();
-	         System.out.println("당신은 토끼에게 "+heart+"개의 ♥ 를 받았습니다.");
+				// 토끼 나오도록 구현
+				heart = Menu.showRabbit();
+				//***-1을 반환받지 못해 마지막으로 반환받은 255로 결국 설정함. 왜 -1을 반환하지 않는지 확인 필요함***
+				if (data == 255) {
+					break;
+				}
+				cnt++;
+			}
+			//전송 속도 출력 완료
+			long end = System.currentTimeMillis();
+			System.out.println("당신은 토끼에게 " + heart + "개의 ♥ 를 받았습니다.");
 			System.out.println("\n데이터 수신 완료 : 약" + (end - start) / 1000 + "초");
 			System.out.println();
 			System.out.println(timeStamp() + "파일 수신을 완료하였습니다." + "(" + cnt + "바이트" + ")");
